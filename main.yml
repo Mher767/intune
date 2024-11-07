@@ -5,12 +5,10 @@
   tasks:
 
     - name: Copy microsoft-edge.deb
-      copy:
-        src: ./microsoft-edge.deb
-        dest: /home/
+      command: wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_130.0.2849.68-1_amd64.deb
 
     - name: Install microsoft-edge.deb using dpkg
-      command: dpkg -i /home/microsoft-edge.deb
+      command: dpkg -i microsoft-edge-stable/microsoft-edge-stable_130.0.2849.68-1_amd64.deb
 
     - name: Install prerequisites
       apt:
