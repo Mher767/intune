@@ -40,6 +40,6 @@
         name: intune-portal
         state: present
 
-    - name: Reboot the server
+    - name: Reboot
       reboot:
         msg: "Rebooting system"
