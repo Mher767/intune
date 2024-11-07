@@ -3,6 +3,15 @@
   hosts: plat
   become: yes
   tasks:
+
+    - name: Copy microsoft-edge.deb
+      copy:
+        src: ./microsoft-edge.deb
+        dest: /home/
+
+    - name: Install microsoft-edge.deb using dpkg
+      command: dpkg -i /home/microsoft-edge.deb
+
     - name: Install prerequisites
       apt:
         name:
@@ -40,6 +49,6 @@
         name: intune-portal
         state: present
 
-    - name: Reboot
+    - name: Reboot the server
       reboot:
         msg: "Rebooting system"
