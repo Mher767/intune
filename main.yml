@@ -1,0 +1,45 @@
+---
+- name: Install Intune Portal on Ubuntu
+  hosts: plat
+  become: yes
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - curl
+          - gpg
+        state: present
+        update_cache: yes
+
+    - name: Download microsoft gpg key
+      command:
+        cmd: curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o microsoft.gpg
+      args:
+        creates: microsoft.gpg
+
+    - name: Install gpg key
+      command:
+        cmd: sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+      args:
+        removes: microsoft.gpg
+
+    - name: Add microsoft repository for ubuntu 22.04
+      shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main" > /etc/apt/sources.list.d/microsoft-ubuntu-jammy-prod.list
+      when: ansible_distribution_release == 'jammy'
+
+    - name: Add microsoft repository for ubuntu 20.04
+      shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/20.04/prod focal main" > /etc/apt/sources.list.d/microsoft-ubuntu-focal-prod.list
+      when: ansible_distribution_release == 'focal'
+
+    - name: Update APT package index
+      apt:
+        update_cache: yes
+
+    - name: Install Intune Portal
+      apt:
+        name: intune-portal
+        state: present
+
+    - name: Reboot the server
+      reboot:
+        msg: "Rebooting system"
